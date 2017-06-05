@@ -7,6 +7,7 @@
 //
 
 #import "VerificationCodeView.h"
+#import "CodeViewTextField.h"
 #define     textViewW  self.bounds.size.width
 #define     textViewH  self.bounds.size.height
 #define ScreenW [UIScreen mainScreen].bounds.size.width
@@ -33,40 +34,53 @@
 -(instancetype)initWithFrame:(CGRect)frame
 {
     if (self = [super initWithFrame:frame]) {
-        self.seletTag = 1;
-        [self creatTextField];
-        [self addTextLineView];
-        self.sizeW = self.bounds.size.width * 1.0f / self.codeNum;
-        self.isSelectStatus = YES; //默认是需要的
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changTextFieldTextNotification) name:UITextFieldTextDidChangeNotification object:nil];
+        [self setupCodeView];
     }
     return self;
 }
 
+-(instancetype)initWithCoder:(NSCoder *)aDecoder
+{
+    if (self = [super initWithCoder:aDecoder]) {
+        [self setupCodeView];
+    }
+    return self;
+}
 
+-(void)setupCodeView
+{
+    self.seletTag = 1;
+    [self creatTextField];
+    
+    self.isCodeViewStatus = YES;
+    
+    self.sizeW = self.bounds.size.width * 1.0f / self.codeNum;
+    self.isSelectStatus = YES; //默认是需要的
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changTextFieldTextNotification) name:UITextFieldTextDidChangeNotification object:nil];
+}
 
-        #pragma mark ==========自定义键盘.================
+#pragma mark ==========自定义键盘.================
 
-        -(void)keyboardWillShowOnDelay:(NSNotification *)notification {
-            [self performSelector:@selector(keyboardWillShow:) withObject:nil afterDelay:0.1];
-        }
+-(void)keyboardWillShowOnDelay:(NSNotification *)notification {
+    [self performSelector:@selector(keyboardWillShow:) withObject:nil afterDelay:0.1];
+}
 
-        - (void)keyboardWillShow:(NSNotification *)notification {
-            
-            NSUInteger cnt = [UIApplication sharedApplication].windows.count;
-            UIWindow *keyboardWindow = [[[UIApplication sharedApplication] windows] objectAtIndex:cnt - 1];
-            if (!self.deleteBtn.superview) {
-                [keyboardWindow addSubview:self.deleteBtn];
-                [keyboardWindow bringSubviewToFront:self.deleteBtn];
-            }
-        }
+- (void)keyboardWillShow:(NSNotification *)notification {
+    
+    NSUInteger cnt = [UIApplication sharedApplication].windows.count;
+    UIWindow *keyboardWindow = [[[UIApplication sharedApplication] windows] objectAtIndex:cnt - 1];
+    if (!self.deleteBtn.superview) {
+        [keyboardWindow addSubview:self.deleteBtn];
+        [keyboardWindow bringSubviewToFront:self.deleteBtn];
+    }
+}
 
-        - (void)removeXButtonFromKeyBoard
-        {
-            [self.deleteBtn removeFromSuperview];
-            self.deleteBtn.hidden = YES;
-            self.deleteBtn = nil;
-        }
+- (void)removeXButtonFromKeyBoard
+{
+    [self.deleteBtn removeFromSuperview];
+    self.deleteBtn.hidden = YES;
+    self.deleteBtn = nil;
+}
 
 
 
@@ -76,25 +90,25 @@
 //通过查找规律正常点击该控件辞去的响应会调两次
 //通过点击其他控件辞去响应的方式调用一次
 //所以在这里使用标记的方式
-        - (BOOL)textFieldShouldEndEditing:(UITextField *)textField
-        {
-            self.flogIndex ++;
-            return YES;
-        }
+- (BOOL)textFieldShouldEndEditing:(UITextField *)textField
+{
+    self.flogIndex ++;
+    return YES;
+}
 
-        - (void)textFieldDidEndEditing:(UITextField *)textField
-        {
-            
-            if (self.flogIndex == 2) {
-                //那么是正常退出.不用理会
-            }else if(self.flogIndex == 1)
-            {
-                //点击转到其他编辑文本的辞去第一响应.应该要删除删除按钮
-                NSLog(@"===========self.selectTag %zd",self.seletTag);
-                self.codeView_IsFirstResponder = NO;
-                [self codeView_ResignFirstResponder];
-            }
-        }
+- (void)textFieldDidEndEditing:(UITextField *)textField
+{
+    
+    if (self.flogIndex == 2) {
+        //那么是正常退出.不用理会
+    }else if(self.flogIndex == 1)
+    {
+        //点击转到其他编辑文本的辞去第一响应.应该要删除删除按钮
+        NSLog(@"===========self.selectTag %zd",self.seletTag);
+        self.codeView_IsFirstResponder = NO;
+        [self codeView_ResignFirstResponder];
+    }
+}
 
 
 #pragma mark ==================响应事件================
@@ -130,81 +144,86 @@
 }
 
 
-        -(void)DeleteButtonDidTouch:(UIButton *)btn
-        {
-            NSLog(@"=删除=====12345555");
-            if (self.seletTag != 1) {
-                UITextField *textField = [self viewWithTag:self.seletTag];
-                [self codeViewResignFirstResponderWithTag:self.seletTag];
-                textField.text = nil;
-                self.seletTag -= 1;
-                UITextField *selectTextField = [self viewWithTag:self.seletTag];
-                selectTextField.text = nil;
-                [self codeViewBecomeFirstResponderWithTag:self.seletTag];
-            }
-        }
+-(void)DeleteButtonDidTouch:(UIButton *)btn
+{
+    
+    if (self.seletTag != 1) {
+    
+        UITextField *textField = [self viewWithTag:self.seletTag];
+        [self codeViewResignFirstResponderWithTag:self.seletTag];
+        textField.text = nil;
+        self.seletTag -= 1;
+        UITextField *selectTextField = [self viewWithTag:self.seletTag];
+        selectTextField.text = nil;
+        [self codeViewBecomeFirstResponderWithTag:self.seletTag];
+    }
+}
 
 
-        -(void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
-        {
-            if (!self.codeView_IsFirstResponder) {
-                UITextField *textField = [self viewWithTag:self.seletTag];
-                if (self.codeNum == self.seletTag) {
-                    UITextField *textField = [self viewWithTag:self.seletTag];
-                    textField.text = nil;
-                }
-                [self codeView_BecomeFirstResponder];
-                textField.enabled = YES;
-                [textField becomeFirstResponder];
-                
-            }else{
-                
-                [self codeView_ResignFirstResponder];
-            }
-        }
-
-
-        //单个控件成为第一响应者
-        -(void)codeViewBecomeFirstResponderWithTag:(NSInteger)tag
-        {
-            self.seletTag = tag;
-            [self uploadTextLineViewWithInex:self.seletTag - 1];
+-(void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+{
+    if (!self.codeView_IsFirstResponder) {
+        UITextField *textField = [self viewWithTag:self.seletTag];
+        if (self.codeNum == self.seletTag) {
             UITextField *textField = [self viewWithTag:self.seletTag];
-            textField.enabled = YES;
-            [textField becomeFirstResponder];
-            
-            self.flogIndex = 0;
+            textField.text = nil;
+            if (_deleteBlock) {
+                _deleteBlock();
+            }
         }
+        [self codeView_BecomeFirstResponder];
+        textField.enabled = YES;
+        [textField becomeFirstResponder];
+        
+    }else{
+        
+        [self codeView_ResignFirstResponder];
+    }
+}
 
-        //单个控件辞去第一响应者
-        -(void)codeViewResignFirstResponderWithTag:(NSInteger)tag
-        {
-            UITextField *textField = [self viewWithTag:tag];
-            textField.enabled = NO;
-            [textField resignFirstResponder];
-            self.flogIndex = 0;
-            
-        }
+
+//单个控件成为第一响应者
+-(void)codeViewBecomeFirstResponderWithTag:(NSInteger)tag
+{
+    self.seletTag = tag;
+    [self uploadTextLineViewWithInex:self.seletTag - 1];
+    UITextField *textField = [self viewWithTag:self.seletTag];
+    textField.enabled = YES;
+    [textField becomeFirstResponder];
+    
+    self.flogIndex = 0;
+}
+
+//单个控件辞去第一响应者
+-(void)codeViewResignFirstResponderWithTag:(NSInteger)tag
+{
+    UITextField *textField = [self viewWithTag:tag];
+    
+    textField.enabled = NO;
+    [textField resignFirstResponder];
+    self.flogIndex = 0;
+    
+}
 
 
-        //整个控件成为第一响应
-        -(void)codeView_BecomeFirstResponder
-        {
-            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShowOnDelay:) name:UIKeyboardWillShowNotification object:nil];
-            [self codeViewBecomeFirstResponderWithTag:self.seletTag];
-            self.codeView_IsFirstResponder = YES;
-        }
+//整个控件成为第一响应
+-(void)codeView_BecomeFirstResponder
+{
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShowOnDelay:) name:UIKeyboardWillShowNotification object:nil];
+    [self codeViewBecomeFirstResponderWithTag:self.seletTag];
+    self.codeView_IsFirstResponder = YES;
+}
 
-        //整个控件辞去第一响应
-        -(void)codeView_ResignFirstResponder
-        {
-            [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
-            //辞去第一响应者
-            [self uploadTextLineViewWithInex:1000];
-            [self removeXButtonFromKeyBoard];
-            [self codeViewResignFirstResponderWithTag:self.seletTag];
-            self.codeView_IsFirstResponder = NO;
-        }
+//整个控件辞去第一响应
+-(void)codeView_ResignFirstResponder
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
+    //辞去第一响应者
+    [self uploadTextLineViewWithInex:1000];
+    [self removeXButtonFromKeyBoard];
+    [self codeViewResignFirstResponderWithTag:self.seletTag];
+    self.codeView_IsFirstResponder = NO;
+}
 
 
 
@@ -221,6 +240,21 @@
     }
 }
 
+//设置是否验证码样式
+-(void)setIsCodeViewStatus:(BOOL)isCodeViewStatus
+{
+    _isCodeViewStatus = isCodeViewStatus;
+    
+    if (!isCodeViewStatus) {
+         [self addTextLineView];
+    }
+    for (int i = 0; i < self.codeNum; ++i) {
+        CodeViewTextField *textField = [self viewWithTag:i + 1];
+        textField.isCodeView = isCodeViewStatus;
+    }
+}
+
+
 //设置文本显示状态
 -(void)setMineSecureTextEntry:(BOOL)mineSecureTextEntry
 {
@@ -236,33 +270,44 @@
 
 -(void)addTextLineViewSelectLayer
 {
-    
-    CAShapeLayer * layer = [[CAShapeLayer alloc]init];
-    
-    layer.fillColor = [UIColor clearColor].CGColor;
-    layer.strokeColor = [UIColor redColor].CGColor;
-    layer.lineJoin = kCALineJoinRound;
-    //    layer.path = bezierPath.CGPath;
-    layer.frame = self.bounds;
-    
-    self.selectLayer = layer;
-    
     [self.layer addSublayer:self.selectLayer];
     
     [self uploadTextLineViewWithInex:0];
+
 }
+
 
 -(void)uploadTextLineViewWithInex:(NSInteger)index
 {
+    self.selectLayer.path = nil;
     UIBezierPath * bezierPath = [UIBezierPath bezierPath];
-    
     if (index == 1000) {
     }else{
-        [bezierPath moveToPoint:CGPointMake(index * self.sizeW, 0)];
-        [bezierPath addLineToPoint:CGPointMake((index + 1) * self.sizeW, 0)];
-        [bezierPath addLineToPoint:CGPointMake((index + 1) * self.sizeW, textViewH)];
-        [bezierPath addLineToPoint:CGPointMake(index * self.sizeW, textViewH)];
-        [bezierPath addLineToPoint:CGPointMake(index * self.sizeW, 0)];
+        
+        if (index == 0) {
+            [bezierPath moveToPoint:CGPointMake(index * self.sizeW + 5, 0)];
+            [bezierPath addLineToPoint:CGPointMake((index + 1) * self.sizeW, 0)];
+            [bezierPath addLineToPoint:CGPointMake((index + 1) * self.sizeW, textViewH)];
+            [bezierPath addLineToPoint:CGPointMake(index * self.sizeW + 5, textViewH)];
+            [bezierPath addArcWithCenter:CGPointMake(5, textViewH - 5) radius:5 startAngle:M_PI_2 endAngle:M_PI clockwise:YES];
+            [bezierPath addLineToPoint:CGPointMake(index * self.sizeW, 5)];
+            [bezierPath addArcWithCenter:CGPointMake(5, 5) radius:5 startAngle:M_PI endAngle:(M_PI + M_PI_2) clockwise:YES];
+        }else if(index == self.codeNum - 1)
+        {
+            [bezierPath moveToPoint:CGPointMake(index * self.sizeW, 0)];
+            [bezierPath addLineToPoint:CGPointMake((index + 1) * self.sizeW - 5, 0)];
+            [bezierPath addArcWithCenter:CGPointMake((index + 1) * self.sizeW - 5,5) radius:5 startAngle:(M_PI + M_PI_2) endAngle:M_PI*2.0  clockwise:YES];
+            [bezierPath addLineToPoint:CGPointMake((index + 1) * self.sizeW, textViewH - 5)];
+            [bezierPath addArcWithCenter:CGPointMake((index + 1) * self.sizeW - 5,textViewH - 5) radius:5 startAngle:0 endAngle:M_PI_2  clockwise:YES];
+            [bezierPath addLineToPoint:CGPointMake(index * self.sizeW, textViewH)];
+            [bezierPath addLineToPoint:CGPointMake(index * self.sizeW, 0)];
+        }else{
+            [bezierPath moveToPoint:CGPointMake(index * self.sizeW , 0)];
+            [bezierPath addLineToPoint:CGPointMake((index + 1) * self.sizeW, 0)];
+            [bezierPath addLineToPoint:CGPointMake((index + 1) * self.sizeW, textViewH)];
+            [bezierPath addLineToPoint:CGPointMake(index * self.sizeW, textViewH)];
+            [bezierPath addLineToPoint:CGPointMake(index * self.sizeW, 0)];
+        }
     }
     self.selectLayer.path = bezierPath.CGPath;
 }
@@ -272,15 +317,10 @@
 {
     
     CGFloat lineW = 1;
-    UIColor * lineColor = [UIColor grayColor];
+//    UIColor * lineColor = [UIColor grayColor];
     CGFloat marginW = textViewW * 1.0f / self.codeNum;
     
-    UIBezierPath * bezierPath = [UIBezierPath bezierPath];
-    [bezierPath moveToPoint:CGPointZero];
-    [bezierPath addLineToPoint:CGPointMake(textViewW, 0)];
-    [bezierPath addLineToPoint:CGPointMake(textViewW, textViewH)];
-    [bezierPath addLineToPoint:CGPointMake(0, textViewH)];
-    [bezierPath addLineToPoint:CGPointMake(0, 0)];
+    UIBezierPath * bezierPath = [UIBezierPath bezierPathWithRoundedRect:self.bounds cornerRadius:5];
     
     for (int i = 1; i < self.codeNum ; ++i) {
         UIBezierPath * bezierPath1 = [UIBezierPath bezierPath];
@@ -290,7 +330,7 @@
     }
     
     CAShapeLayer * layer = [[CAShapeLayer alloc]init];
-    layer.borderColor = lineColor.CGColor;
+    layer.borderColor = [UIColor clearColor].CGColor;
     layer.borderWidth = lineW;
     layer.fillColor = [UIColor clearColor].CGColor;
     layer.strokeColor = [UIColor grayColor].CGColor;
@@ -309,7 +349,7 @@
     CGFloat marginW = textViewW * 1.0 / self.codeNum;
     
     for (int i = 0; i < self.codeNum; ++i) {
-        UITextField * textField = [self getTextFieldWithFrame:CGRectMake(i * marginW, 0, marginW, textViewH) andTag:i + 1];
+        CodeViewTextField * textField = [self getTextFieldWithFrame:CGRectMake(i * marginW, 0, marginW, textViewH) andTag:i + 1];
         [self addSubview:textField];
     }
     
@@ -317,15 +357,15 @@
 }
 
 
--(UITextField *)getTextFieldWithFrame:(CGRect)frame andTag:(NSInteger)tag
+-(CodeViewTextField *)getTextFieldWithFrame:(CGRect)frame andTag:(NSInteger)tag
 {
     
-    UITextField * textField = [[UITextField alloc]initWithFrame:frame];
+    CodeViewTextField * textField = [[CodeViewTextField alloc]initWithFrame:frame];
     textField.clearButtonMode = UITextFieldViewModeNever;
     textField.backgroundColor = [UIColor whiteColor];
     textField.tintColor = [UIColor redColor];
     textField.borderStyle = UITextBorderStyleNone;
-    textField.leftView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, textViewW / self.codeNum * 0.5, 0)];
+    textField.leftView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, textViewW / self.codeNum * 0.5 - 5, 0)];
     textField.leftViewMode = UITextFieldViewModeAlways;
     textField.keyboardType = UIKeyboardTypeNumberPad;
     textField.delegate = self;
@@ -347,6 +387,23 @@
         [_deleteBtn addTarget:self action:@selector(DeleteButtonDidTouch:) forControlEvents:UIControlEventTouchUpInside];
     }
     return _deleteBtn;
+}
+
+-(CAShapeLayer *)selectLayer
+{
+    if (!_selectLayer) {
+        CAShapeLayer * layer = [[CAShapeLayer alloc]init];
+        layer.lineWidth = 1;
+        layer.borderColor = [UIColor clearColor].CGColor;
+        layer.fillColor = [UIColor clearColor].CGColor;
+        layer.strokeColor = [UIColor redColor].CGColor;
+        layer.lineJoin = kCALineJoinRound;
+        //        layer.path = bezierPath.CGPath;
+        layer.frame = self.bounds;
+        
+        _selectLayer = layer;
+    }
+    return _selectLayer;
 }
 
 

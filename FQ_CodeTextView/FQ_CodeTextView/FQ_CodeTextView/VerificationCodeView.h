@@ -29,10 +29,16 @@
 //输入完成的block
 @property (nonatomic, copy) void(^completeBlock)(NSString *completeStr);
 
+//输入完成又删除一个的回调
+@property (nonatomic, copy) void(^deleteBlock)();
+
 //当前是否显示黑色小球的样式
 @property (nonatomic, assign) BOOL mineSecureTextEntry;
 
 //是否需要选中效果
 @property (nonatomic, assign) BOOL isSelectStatus;
+
+//是否需要验证码样式
+@property (nonatomic, assign) BOOL isCodeViewStatus;
 
 @end

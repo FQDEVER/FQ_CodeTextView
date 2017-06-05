@@ -14,8 +14,9 @@
 		B92660651ECDBDEE003A1372 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B92660641ECDBDEE003A1372 /* Assets.xcassets */; };
 		B92660681ECDBDEE003A1372 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B92660661ECDBDEE003A1372 /* LaunchScreen.storyboard */; };
 		B92660731ECDBDEE003A1372 /* FQ_CodeTextViewUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = B92660721ECDBDEE003A1372 /* FQ_CodeTextViewUITests.m */; };
-		B92660821ECDBE2F003A1372 /* FQ_TextView.m in Sources */ = {isa = PBXBuildFile; fileRef = B926607F1ECDBE2F003A1372 /* FQ_TextView.m */; };
 		B92660831ECDBE2F003A1372 /* VerificationCodeView.m in Sources */ = {isa = PBXBuildFile; fileRef = B92660811ECDBE2F003A1372 /* VerificationCodeView.m */; };
+		B92777FA1EE5C551002BDE05 /* FQ_CodeTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = B92777F61EE5C551002BDE05 /* FQ_CodeTextView.m */; };
+		B92777FB1EE5C551002BDE05 /* CodeViewTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = B92777F81EE5C551002BDE05 /* CodeViewTextField.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -42,10 +43,12 @@
 		B926606E1ECDBDEE003A1372 /* FQ_CodeTextViewUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FQ_CodeTextViewUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B92660721ECDBDEE003A1372 /* FQ_CodeTextViewUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FQ_CodeTextViewUITests.m; sourceTree = "<group>"; };
 		B92660741ECDBDEE003A1372 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		B926607E1ECDBE2F003A1372 /* FQ_TextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FQ_TextView.h; sourceTree = "<group>"; };
-		B926607F1ECDBE2F003A1372 /* FQ_TextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FQ_TextView.m; sourceTree = "<group>"; };
 		B92660801ECDBE2F003A1372 /* VerificationCodeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VerificationCodeView.h; sourceTree = "<group>"; };
 		B92660811ECDBE2F003A1372 /* VerificationCodeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VerificationCodeView.m; sourceTree = "<group>"; };
+		B92777F61EE5C551002BDE05 /* FQ_CodeTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FQ_CodeTextView.m; sourceTree = "<group>"; };
+		B92777F71EE5C551002BDE05 /* FQ_CodeTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FQ_CodeTextView.h; sourceTree = "<group>"; };
+		B92777F81EE5C551002BDE05 /* CodeViewTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CodeViewTextField.m; sourceTree = "<group>"; };
+		B92777F91EE5C551002BDE05 /* CodeViewTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeViewTextField.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -121,8 +124,10 @@
 		B926607D1ECDBE2F003A1372 /* FQ_CodeTextView */ = {
 			isa = PBXGroup;
 			children = (
-				B926607E1ECDBE2F003A1372 /* FQ_TextView.h */,
-				B926607F1ECDBE2F003A1372 /* FQ_TextView.m */,
+				B92777F61EE5C551002BDE05 /* FQ_CodeTextView.m */,
+				B92777F71EE5C551002BDE05 /* FQ_CodeTextView.h */,
+				B92777F81EE5C551002BDE05 /* CodeViewTextField.m */,
+				B92777F91EE5C551002BDE05 /* CodeViewTextField.h */,
 				B92660801ECDBE2F003A1372 /* VerificationCodeView.h */,
 				B92660811ECDBE2F003A1372 /* VerificationCodeView.m */,
 			);
@@ -234,8 +239,9 @@
 				B92660831ECDBE2F003A1372 /* VerificationCodeView.m in Sources */,
 				B92660601ECDBDEE003A1372 /* ViewController.m in Sources */,
 				B926605D1ECDBDEE003A1372 /* AppDelegate.m in Sources */,
-				B92660821ECDBE2F003A1372 /* FQ_TextView.m in Sources */,
+				B92777FA1EE5C551002BDE05 /* FQ_CodeTextView.m in Sources */,
 				B926605A1ECDBDEE003A1372 /* main.m in Sources */,
+				B92777FB1EE5C551002BDE05 /* CodeViewTextField.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -428,6 +434,7 @@
 				B92660791ECDBDEE003A1372 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		B926607A1ECDBDEE003A1372 /* Build configuration list for PBXNativeTarget "FQ_CodeTextViewUITests" */ = {
 			isa = XCConfigurationList;
@@ -436,6 +443,7 @@
 				B926607C1ECDBDEE003A1372 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

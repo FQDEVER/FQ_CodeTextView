@@ -9,11 +9,11 @@
 
 #import "ViewController.h"
 
-#import "FQ_TextView.h"
+#import "FQ_CodeTextView.h"
 #import "VerificationCodeView.h"
 
 @interface ViewController ()
-@property (nonatomic, strong) FQ_TextView *textView;
+@property (nonatomic, strong) FQ_CodeTextView *textView;
 @property (nonatomic, strong) VerificationCodeView *codeView;
 @end
 
@@ -24,13 +24,14 @@
     
     self.view.backgroundColor = [UIColor whiteColor];
     
-    self.textView = [[FQ_TextView alloc]initWithFrame:CGRectMake(0, 100, self.view.bounds.size.width, 50)];
+    self.textView = [[FQ_CodeTextView alloc]initWithFrame:CGRectMake(0, 100, self.view.bounds.size.width, 50)];
     self.textView.isSelectStatus = YES;
     
     
     self.codeView = [[VerificationCodeView alloc]initWithFrame:CGRectMake(0, 200, self.view.bounds.size.width, 50)];
+    self.codeView.isCodeViewStatus = NO;
     self.codeView.mineSecureTextEntry = NO;
-    self.codeView.isSelectStatus = NO;
+    self.codeView.isSelectStatus = YES;
     [self.view addSubview:self.textView];
     [self.view addSubview:self.codeView];
     
